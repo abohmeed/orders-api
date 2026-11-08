@@ -126,4 +126,13 @@ jobs:
         run: gitleaks detect --no-banner --redact --source .
 
       - name: OSV-Scanner
-        run: osv-scanner scan source -r .
+        run: |
+          # Lab app has no lockfile; treat "no packages" as pass.
+          set +e
+          out=$(osv-scanner scan source -r . 2>&1)
+          code=$?
+          echo "$out"
+          if echo "$out" | grep -qiE 'no package sources found|no packages found'; then
+            exit 0
+          fi
+          exit $code

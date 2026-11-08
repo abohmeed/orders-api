@@ -1,10 +1,10 @@
-name: plan
+name: plan-placeholder
 on:
   pull_request:
 permissions:
   contents: read
 jobs:
-  plan:
+  plan_placeholder:
     name: plan
     runs-on: ubuntu-latest
     steps:
