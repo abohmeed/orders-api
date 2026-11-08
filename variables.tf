@@ -32,3 +32,5 @@ variable "cost_center" {
   type    = string
   default = "dsai-labs"
 }
+
+# oidc smoke
