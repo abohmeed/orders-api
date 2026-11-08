@@ -59,7 +59,9 @@ jobs:
       - name: Policy check
         id: policy
         continue-on-error: true
-        run: conftest test plan.json --no-color | tee policy.txt
+        run: |
+          set -o pipefail
+          conftest test plan.json --no-color | tee policy.txt
 
       - name: Comment plan and policy on the PR
         env:
