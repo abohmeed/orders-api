@@ -5,8 +5,8 @@ permissions:
   contents: read
 jobs:
   plan_placeholder:
-    name: plan
+    name: plan-placeholder
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "plan placeholder — replace with real DSAI-07/09 jobs on the demo repo"
+      - run: echo "placeholder only; real plan is terraform-plan.yml"
