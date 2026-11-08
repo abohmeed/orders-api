@@ -1,12 +1,9 @@
 name: deps
 on:
   pull_request:
-permissions:
-  contents: read
 jobs:
   deps:
-    name: deps
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: echo "deps placeholder — replace with real DSAI-07/09 jobs on the demo repo"
+      - name: Placeholder deps check
+        run: echo "deps placeholder OK (DSAI-07/15 shared demo repo)"
