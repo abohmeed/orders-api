@@ -1,0 +1,4 @@
+# Pinned at T2-S03-labs verify (2026-11-08).
+[tools]
+terraform = "1.17.1"
+conftest = "0.71.1"

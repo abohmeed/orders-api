@@ -1,0 +1,129 @@
+name: terraform-plan
+
+on:
+  pull_request:
+    paths:
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - "policy/**"
+      - "app/**"
+      - ".github/workflows/terraform-plan.yml"
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    env:
+      TF_IN_AUTOMATION: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.1
+          terraform_wrapper: false
+
+      - name: Setup Conftest
+        run: |
+          # Pinned at DSAI lab verify (2026-11-08).
+          CONFTEST_VERSION=0.71.1
+          curl -sSL "https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz" | tar xz conftest
+          sudo mv conftest /usr/local/bin/
+
+      - name: Format and validate
+        run: |
+          terraform fmt -check -recursive
+          terraform init -input=false
+          terraform validate
+
+      - name: Plan
+        run: |
+          terraform plan -input=false -no-color -out tfplan | tee plan.txt
+          terraform show -json tfplan > plan.json
+
+      - name: Policy tests
+        run: conftest verify
+
+      - name: Policy check
+        id: policy
+        continue-on-error: true
+        run: conftest test plan.json --no-color | tee policy.txt
+
+      - name: Comment plan and policy on the PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          OUTCOME: ${{ steps.policy.outcome }}
+        run: |
+          {
+            echo "### Terraform plan"
+            echo
+            echo "Policy: **${OUTCOME}**"
+            echo
+            echo "<details><summary>Policy output</summary>"
+            echo
+            echo '```'
+            cat policy.txt
+            echo '```'
+            echo "</details>"
+            echo
+            echo "<details><summary>Plan</summary>"
+            echo
+            echo '```'
+            tail -c 60000 plan.txt
+            echo '```'
+            echo "</details>"
+          } > comment.md
+          gh pr comment "$PR" --body-file comment.md --edit-last || gh pr comment "$PR" --body-file comment.md
+
+      - name: Fail on policy
+        if: steps.policy.outcome == 'failure'
+        run: |
+          echo "Policy check failed. See the PR comment."
+          exit 1
+
+  # Second job: Semgrep, gitleaks, OSV-Scanner on the application code (DSAI-07 step 2 narration).
+  scanners:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Semgrep, gitleaks, OSV-Scanner
+        run: |
+          pip install --quiet "semgrep==1.184.0"
+          GITLEAKS_VERSION=8.30.1
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar xz gitleaks
+          sudo mv gitleaks /usr/local/bin/
+          OSV_VERSION=2.2.1
+          curl -sSL "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_${OSV_VERSION}_linux_amd64" \
+            -o osv-scanner
+          chmod +x osv-scanner
+          sudo mv osv-scanner /usr/local/bin/
+
+      - name: Semgrep
+        run: semgrep scan --config p/python --config p/secrets --error --quiet
+
+      - name: gitleaks
+        run: gitleaks detect --no-banner --redact --source .
+
+      - name: OSV-Scanner
+        run: osv-scanner scan source -r .
