@@ -113,8 +113,7 @@ jobs:
           curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
             | tar xz gitleaks
           sudo mv gitleaks /usr/local/bin/
-          OSV_VERSION=2.2.1
-          curl -sSL "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_${OSV_VERSION}_linux_amd64" \
+          curl -sSL "https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_linux_amd64" \
             -o osv-scanner
           chmod +x osv-scanner
           sudo mv osv-scanner /usr/local/bin/
