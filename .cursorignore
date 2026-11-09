@@ -1,1 +1,4 @@
-# DSAI-13: secret paths
+# DSAI-13: secret paths excluded from AI context
+.env*
+*.pem
+secrets/
