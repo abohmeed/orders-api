@@ -1,0 +1,10 @@
+name: rate-limit-note
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  note:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "DSAI-15 agent branch touches workflows (code owners)"
