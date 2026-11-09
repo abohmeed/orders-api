@@ -1,14 +1,9 @@
-# DSAI-12 starts with the bad default on purpose (write-all).
-# On camera: replace with contents:read, pull-requests:write, id-token:write.
 name: agent-fix
 
 on:
   pull_request:
 
-permissions:
-  contents: read
-  pull-requests: write
-  id-token: write
+permissions: write-all
 
 jobs:
   agent-fix:
