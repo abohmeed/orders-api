@@ -1,9 +1,0 @@
-# DSAI-15 — sensitive paths require owner review
-*       @abohmeed
-
-/.github/workflows/  @abohmeed
-/infra/              @abohmeed
-/governance/         @abohmeed
-/policy/             @abohmeed
-/pyproject.toml      @abohmeed
-/uv.lock             @abohmeed

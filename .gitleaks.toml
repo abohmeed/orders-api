@@ -1,0 +1,17 @@
+title = "DSAI-13 gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "dsai-fake-aws-access-key"
+description = "DSAI lab AWS access key pattern (includes adjusted lab fakes)"
+regex = '''AKIA[0-9A-Z]{16}'''
+tags = ["key", "AWS"]
+
+# Do not allowlist lab fixtures
+[allowlist]
+description = "empty allowlist for lab — catch demo fakes"
+paths = [
+  '''^\.git/''',
+]
