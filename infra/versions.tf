@@ -10,13 +10,5 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
-
-  default_tags {
-    tags = {
-      Owner       = var.owner
-      CostCenter  = var.cost_center
-      Environment = var.env
-    }
-  }
+  region = "eu-west-1"
 }
