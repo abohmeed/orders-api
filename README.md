@@ -17,3 +17,5 @@ GitHub Actions runs fmt, validate, plan, and the DSAI-06 Conftest policies on ev
 4. Commit, push, watch the check pass and the merge button unlock.
 
 State: this lab plans against empty local state in CI, so every resource shows as create. Course repos that use a remote state backend pass `-backend-config` in the init step instead.
+
+# DSAI-12 take branch
