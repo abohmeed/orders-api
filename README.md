@@ -18,3 +18,5 @@ Endpoints on the clean baseline:
 - `GET /orders/{id}` — fetch one order (parameterised SQL)
 
 Terraform lives in `infra/` (AWS provider 6.x, Terraform 1.17). `main.tf` starts empty on purpose.
+
+# DSAI-13 prepare prove
