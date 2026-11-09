@@ -1,19 +1,24 @@
-# DSAI-07 lab: CI gate, plan on PR, fail on policy
+# orders-api (DSAI lab)
 
-GitHub Actions runs fmt, validate, plan, and the DSAI-06 Conftest policies on every pull request, posts the result as a PR comment, and fails the check when policy fails. A second job runs Semgrep, gitleaks, and OSV-Scanner on the application code. Branch protection makes the plan check required.
+Small FastAPI + sqlite orders service used across the DevSecOps for AI-Assisted Development course.
 
-## One-time setup (off camera in the lesson)
+## Quick start
 
-1. Push this folder to a new private GitHub repository on Ahmed's personal GitHub (`main` branch).
-2. In the AWS sandbox, create an IAM OIDC provider for `token.actions.githubusercontent.com` and a role the workflow can assume from this repository's pull requests. Give it read-only permissions: plan needs to read, never write.
-3. In the repository settings, add an Actions variable `AWS_PLAN_ROLE_ARN` with that role's ARN.
-4. Branch protection on `main`: require the `plan` status check before merging.
+```bash
+mise trust
+mise install
+./check-tools.sh
+uv sync
+pytest -q
+```
 
-## Steps
+Endpoints on the clean baseline:
 
-1. `git switch -c ai/app-logs`, copy `change/logs.tf` to the repo root, commit, push.
-2. `gh pr create --fill`. Watch the `plan` check fail and read the PR comment.
-3. Fix with Claude in Cursor: block public access on the logs bucket and scope the logs policy actions.
-4. Commit, push, watch the check pass and the merge button unlock.
+- `GET /orders` — list the twenty seed orders
+- `GET /orders/{id}` — fetch one order (parameterised SQL)
 
-State: this lab plans against empty local state in CI, so every resource shows as create. Course repos that use a remote state backend pass `-backend-config` in the init step instead.
+Terraform lives in `infra/` (AWS provider 6.x, Terraform 1.17). `main.tf` starts empty on purpose.
+
+# DSAI-12 take branch
+
+# DSAI-12 take branch
