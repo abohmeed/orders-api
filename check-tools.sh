@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DSAI-02: prove the pins the rest of the course expects.
+# Check the pinned tool versions.
 set -euo pipefail
 
 pass=0
