@@ -107,7 +107,7 @@ def list_orders() -> list[dict[str, Any]]:
 
 @app.get("/orders/{order_id}", response_model=Order)
 def get_order(order_id: int) -> dict[str, Any]:
-    # Parameterised query.
+    # Parameterised query: the driver escapes the value.
     with get_db() as conn:
         row = conn.execute(
             "SELECT id, customer, status, total FROM orders WHERE id = ?",
